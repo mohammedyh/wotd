@@ -26,11 +26,16 @@ func main() {
 	}
 
 	word := doc.Find(".otd-item-headword__word h1.js-fit-text")
-	defAndType := doc.Find(".otd-item-headword__pos-blocks .otd-item-headword__pos p")
-	wordType := defAndType.Eq(0)
-	definition := defAndType.Eq(1)
+	definitionAndType := doc.Find(".otd-item-headword__pos-blocks .otd-item-headword__pos p")
+	wordExamples := doc.Find(".wotd-item-origin__content ul:nth-of-type(2)").Eq(0)
+	wordType := definitionAndType.Eq(0)
+	definition := definitionAndType.Eq(1)
+	formattedExamples := strings.TrimSuffix(
+		strings.ReplaceAll(wordExamples.Text(), "\n", " \n - "), "\n - ",
+	)
 
 	fmt.Printf("Word of the day: %v\n", word.First().Text())
 	fmt.Printf("Word Type: %s\n", strings.Trim(wordType.Text(), " \n"))
 	fmt.Printf("Definition: %v\n", definition.Text())
+	fmt.Printf("Examples: %v\n", formattedExamples)
 }
