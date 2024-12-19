@@ -22,7 +22,6 @@ const (
 
 func main() {
 	openInBrowserFlag := flag.Bool("o", false, "Opens word of the day page in browser")
-
 	flag.Parse()
 
 	if *openInBrowserFlag {
