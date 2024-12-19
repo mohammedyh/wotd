@@ -9,6 +9,12 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+const (
+	MAGENTA   = "\033[30;45m"
+	UNDERLINE = "\033[4m"
+	NOCOLOR   = "\033[0m"
+)
+
 func main() {
 	res, err := http.Get("https://www.dictionary.com/e/word-of-the-day")
 	if err != nil {
@@ -34,8 +40,16 @@ func main() {
 		strings.ReplaceAll(wordExamples.Text(), "\n", " \n - "), "\n - ",
 	)
 
-	fmt.Printf("Word of the day: %v\n", word.First().Text())
-	fmt.Printf("Word Type: %s\n", strings.Trim(wordType.Text(), " \n"))
-	fmt.Printf("Definition: %v\n", definition.Text())
-	fmt.Printf("Examples: %v\n", formattedExamples)
+	fmt.Printf("%v: %v\n", colorOutput("Word"), word.First().Text())
+	fmt.Printf("%v: %v\n", underlineOutput("Word Type"), strings.Trim(wordType.Text(), " \n"))
+	fmt.Printf("%v: %v\n", underlineOutput("Definition"), definition.Text())
+	fmt.Printf("%v: %v\n", underlineOutput("Examples"), formattedExamples)
+}
+
+func colorOutput(message string) string {
+	return fmt.Sprintf("%v %v %v", MAGENTA, message, NOCOLOR)
+}
+
+func underlineOutput(message string) string {
+	return fmt.Sprintf("%v%v%v", UNDERLINE, message, NOCOLOR)
 }
