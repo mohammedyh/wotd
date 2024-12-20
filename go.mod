@@ -1,4 +1,4 @@
-module github.com/mohammedyh/wotd-go
+module github.com/mohammedyh/wotd
 
 go 1.23.4
 
