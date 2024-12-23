@@ -21,21 +21,20 @@ const (
 )
 
 func main() {
-	openInBrowserFlag := flag.Bool("o", false, "Opens word of the day page in browser")
+	openInBrowser := flag.Bool("o", false, "Opens word of the day page in browser")
 	flag.Parse()
 
-	if *openInBrowserFlag {
-		openInBrowser(WOTD_URL)
-		os.Exit(0)
+	if *openInBrowser {
+		openWotdPageInBrowser(WOTD_URL)
 	}
 
 	res, err := http.Get(WOTD_URL)
 	if err != nil {
-		log.Fatal("error fetching url:", err)
+		log.Fatal(err)
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != 200 {
+	if res.StatusCode != http.StatusOK {
 		log.Fatalf("status code error %d %s", res.StatusCode, res.Status)
 	}
 
@@ -59,7 +58,7 @@ func main() {
 	fmt.Printf("%v: %v\n", underlineOutput("Examples"), formattedExamples)
 }
 
-func openInBrowser(url string) {
+func openWotdPageInBrowser(url string) {
 	switch runtime.GOOS {
 	case "linux":
 		open("xdg-open", url)
@@ -68,6 +67,7 @@ func openInBrowser(url string) {
 	case "windows":
 		open("start", url)
 	}
+	os.Exit(0)
 }
 
 func open(program, url string) {
