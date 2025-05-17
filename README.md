@@ -4,6 +4,6 @@ A tiny CLI that returns the current word of the day (from dictionary.com), the w
 
 If an `-o` flag is provided, the word of the day page will open in the user's browser.
 
-![CLI demo GIF](./demo.gif)
+![CLI demo GIF](./.github/demo.gif)
 
 [Word of the day](https://www.dictionary.com/e/word-of-the-day)
