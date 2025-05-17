@@ -40,15 +40,19 @@ func initDocumentReader(url string) (*goquery.Document, error) {
 
 func main() {
 	openInBrowser := flag.Bool("o", false, "Opens word of the day page in browser")
-	shouldPlayProunciationAudio := flag.Bool("a", false, "Plays the pronounciation audio for the word")
+	shouldPlayPronunciationAudio := flag.Bool("a", false, "Plays the pronunciation audio for the word")
 	flag.Parse()
 
 	if *openInBrowser {
 		openWotdPageInBrowser(WOTD_URL)
 	}
 
-	if *shouldPlayProunciationAudio {
-		playProunciationAudio()
+	if *shouldPlayPronunciationAudio {
+		err := playProunciationAudio()
+		if err != nil {
+			log.Fatal(err)
+		}
+		os.Exit(0)
 	}
 	doc, err := initDocumentReader(WOTD_URL)
 	if err != nil {

@@ -8,43 +8,54 @@ import (
 	"os/exec"
 )
 
-func playProunciationAudio() (string, error) {
+func playProunciationAudio() error {
 	doc, err := initDocumentReader(WOTD_URL)
 	if err != nil {
-		return "", fmt.Errorf("error parsing html document: %v", err)
+		return fmt.Errorf("error parsing html document: %v", err)
 	}
 
 	audioFileUrl, audioFileExists := doc.Find(".otd-item-headword__pronunciation-audio").Attr("href")
 	if !audioFileExists {
-		return "", fmt.Errorf("no pronounciation audio for this word\n")
+		return fmt.Errorf("no pronunciation audio for this word\n")
 	}
 
 	res, err := http.Get(audioFileUrl)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("status code error %d %s\n", res.StatusCode, res.Status)
+		return fmt.Errorf("status code error %d %s\n", res.StatusCode, res.Status)
 	}
 
-	data, _ := io.ReadAll(res.Body)
-	home, _ := os.UserHomeDir()
-	file, err := os.CreateTemp(home, "pronounciation-audio*.mp3")
+	audioData, err := io.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return fmt.Errorf("unable to read audio file")
 	}
 
-	_, err = file.Write(data)
+	homedir, err := os.UserHomeDir()
 	if err != nil {
-		return "", err
+		return fmt.Errorf("can't get user home directory")
 	}
 
-	defer file.Close()
+	file, err := os.CreateTemp(homedir, "pronunciation-audio*.mp3")
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write(audioData)
+	if err != nil {
+		return err
+	}
+
 	defer os.Remove(file.Name())
+	defer file.Close()
 
 	cmd := exec.Command("afplay", file.Name())
-	cmd.Run()
-	return string(data), nil
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
 }
