@@ -20,27 +20,39 @@ const (
 	NOCOLOR   = "\033[0m"
 )
 
+func initDocumentReader(url string) (*goquery.Document, error) {
+	res, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code error %d %s", res.StatusCode, res.Status)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return doc, nil
+}
+
 func main() {
 	openInBrowser := flag.Bool("o", false, "Opens word of the day page in browser")
+	shouldPlayProunciationAudio := flag.Bool("a", false, "Plays the pronounciation audio for the word")
 	flag.Parse()
 
 	if *openInBrowser {
 		openWotdPageInBrowser(WOTD_URL)
 	}
 
-	res, err := http.Get(WOTD_URL)
-	if err != nil {
-		log.Fatal(err)
+	if *shouldPlayProunciationAudio {
+		playProunciationAudio()
 	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		log.Fatalf("status code error %d %s", res.StatusCode, res.Status)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	doc, err := initDocumentReader(WOTD_URL)
 	if err != nil {
-		log.Fatal("error parsing html page", err)
+		log.Fatalf("error parsing html page: %v", err)
 	}
 
 	word := doc.Find(".otd-item-headword__word h1.js-fit-text")
