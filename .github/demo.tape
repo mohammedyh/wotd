@@ -23,4 +23,3 @@ Sleep 2s
 Type "wotd -h" Sleep 500ms
 Enter
 Sleep 2s
-
