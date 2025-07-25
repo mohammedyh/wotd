@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 )
 
 func playProunciationAudio() error {
@@ -59,8 +60,20 @@ func playProunciationAudio() error {
 		}
 	}()
 
-	if err := exec.Command("afplay", file.Name()).Run(); err != nil {
-		return err
+	switch runtime.GOOS {
+	case "darwin":
+		if err := exec.Command("afplay", file.Name()).Run(); err != nil {
+			return err
+		}
+	case "linux":
+		if err := exec.Command("aplay", file.Name()).Run(); err != nil {
+			return err
+		}
+	case "windows":
+		cmd := fmt.Sprintf("powershell -c (New-Object Media.SoundPlayer '%s').PlaySync();", file.Name())
+		if err := exec.Command(cmd).Run(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
