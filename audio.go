@@ -10,8 +10,8 @@ import (
 	"runtime"
 )
 
-func playProunciationAudio() error {
-	doc, err := initDocumentReader(WOTD_URL)
+func playPronunciationAudio() error {
+	doc, err := initDocumentReader(wotdURL)
 	if err != nil {
 		return fmt.Errorf("error parsing html document: %v", err)
 	}

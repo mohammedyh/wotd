@@ -14,10 +14,10 @@ import (
 )
 
 const (
-	WOTD_URL  = "https://www.dictionary.com/e/word-of-the-day"
-	MAGENTA   = "\033[30;45m"
-	UNDERLINE = "\033[4m"
-	NOCOLOR   = "\033[0m"
+	wotdURL   = "https://www.dictionary.com/e/word-of-the-day"
+	magenta   = "\033[30;45m"
+	underline = "\033[4m"
+	noColor   = "\033[0m"
 )
 
 func initDocumentReader(url string) (*goquery.Document, error) {
@@ -44,16 +44,16 @@ func main() {
 	flag.Parse()
 
 	if *openInBrowser {
-		openWotdPageInBrowser(WOTD_URL)
+		openWotdPageInBrowser(wotdURL)
 	}
 
 	if *shouldPlayPronunciationAudio {
-		if err := playProunciationAudio(); err != nil {
+		if err := playPronunciationAudio(); err != nil {
 			log.Fatal(err)
 		}
 		os.Exit(0)
 	}
-	doc, err := initDocumentReader(WOTD_URL)
+	doc, err := initDocumentReader(wotdURL)
 	if err != nil {
 		log.Fatalf("error parsing html page: %v", err)
 	}
@@ -92,9 +92,9 @@ func open(program, url string) {
 }
 
 func colorOutput(message string) string {
-	return fmt.Sprintf("%v %v %v", MAGENTA, message, NOCOLOR)
+	return fmt.Sprintf("%v %v %v", magenta, message, noColor)
 }
 
 func underlineOutput(message string) string {
-	return fmt.Sprintf("%v%v%v", UNDERLINE, message, NOCOLOR)
+	return fmt.Sprintf("%v%v%v", underline, message, noColor)
 }
