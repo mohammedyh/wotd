@@ -48,8 +48,7 @@ func main() {
 	}
 
 	if *shouldPlayPronunciationAudio {
-		err := playProunciationAudio()
-		if err != nil {
+		if err := playProunciationAudio(); err != nil {
 			log.Fatal(err)
 		}
 		os.Exit(0)
@@ -87,9 +86,7 @@ func openWotdPageInBrowser(url string) {
 }
 
 func open(program, url string) {
-	cmd := exec.Command(program, url)
-	err := cmd.Run()
-	if err != nil {
+	if err := exec.Command(program, url).Run(); err != nil {
 		log.Fatal("unable to open word of the day page in browser")
 	}
 }

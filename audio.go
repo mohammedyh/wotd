@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -44,17 +45,21 @@ func playProunciationAudio() error {
 		return err
 	}
 
-	_, err = file.Write(audioData)
-	if err != nil {
+	if _, err := file.Write(audioData); err != nil {
 		return err
 	}
+	defer func() {
+		if err := os.Remove(file.Name()); err != nil {
+			log.Printf("failed to remove file %s: %v", file.Name(), err)
+		}
+	}()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Printf("failed to close file %s: %v", file.Name(), err)
+		}
+	}()
 
-	defer os.Remove(file.Name())
-	defer file.Close()
-
-	cmd := exec.Command("afplay", file.Name())
-	err = cmd.Run()
-	if err != nil {
+	if err := exec.Command("afplay", file.Name()).Run(); err != nil {
 		return err
 	}
 	return nil
