@@ -58,13 +58,13 @@ func main() {
 		log.Fatalf("error parsing html page: %v", err)
 	}
 
-	word := doc.Find(".otd-item-headword__word h1.js-fit-text")
-	definitionAndType := doc.Find(".otd-item-headword__pos-blocks .otd-item-headword__pos p")
-	wordExamples := doc.Find(".wotd-item-origin__content ul:nth-of-type(2)").Eq(0)
-	wordType := definitionAndType.Eq(0)
-	definition := definitionAndType.Eq(1)
-	formattedExamples := strings.TrimSuffix(
-		strings.ReplaceAll(wordExamples.Text(), "\n", " \n - "), "\n - ",
+	var (
+		word              = doc.Find(".otd-item-headword__word h1.js-fit-text")
+		definitionAndType = doc.Find(".otd-item-headword__pos-blocks .otd-item-headword__pos p")
+		wordExamples      = doc.Find(".wotd-item-origin__content ul:nth-of-type(2)").Eq(0)
+		wordType          = definitionAndType.Eq(0)
+		definition        = definitionAndType.Eq(1)
+		formattedExamples = strings.TrimSuffix(strings.ReplaceAll(wordExamples.Text(), "\n", " \n - "), "\n - ")
 	)
 
 	fmt.Printf("%v: %v\n", colorOutput("Word"), word.First().Text())
