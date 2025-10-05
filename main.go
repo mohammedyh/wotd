@@ -44,7 +44,8 @@ func main() {
 	flag.Parse()
 
 	if *openInBrowser {
-		openWotdPageInBrowser(wotdURL)
+		open(wotdURL)
+		os.Exit(0)
 	}
 
 	if *shouldPlayPronunciationAudio {
@@ -72,21 +73,19 @@ func main() {
 	fmt.Printf("%v:\n%v\n", underlineOutput("Examples"), formattedExamples)
 }
 
-func openWotdPageInBrowser(url string) {
+func open(url string) {
+	var program string
+
 	switch runtime.GOOS {
 	case "linux":
-		open("xdg-open", url)
+		program = "xdg-open"
 	case "darwin":
-		open("open", url)
+		program = "open"
 	case "windows":
-		open("start", url)
+		program = "start"
 	}
-	os.Exit(0)
-}
-
-func open(program, url string) {
 	if err := exec.Command(program, url).Run(); err != nil {
-		log.Fatal("unable to open word of the day page in browser")
+		log.Fatal("couldn't open word of the day page in browser")
 	}
 }
 
