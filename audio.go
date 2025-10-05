@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -16,19 +17,20 @@ func playPronunciationAudio() error {
 		return fmt.Errorf("error parsing html document: %v", err)
 	}
 
-	audioFileUrl, audioFileExists := doc.Find(".otd-item-headword__pronunciation-audio").Attr("href")
-	if !audioFileExists {
-		return fmt.Errorf("no pronunciation audio for this word\n")
+	filename, exists := doc.Find(".word-and-pronunciation .play-pron").Attr("data-file")
+	if !exists {
+		return errors.New("unable to get audio filename")
 	}
+	audioURL := fmt.Sprintf("https://media.merriam-webster.com/audio/prons/en/us/mp3/%v/%v.mp3", string(filename[0]), filename)
 
-	res, err := http.Get(audioFileUrl)
+	res, err := http.Get(audioURL) // TODO: implement custom http client with timeout
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("status code error %d %s\n", res.StatusCode, res.Status)
+		return fmt.Errorf("status code error %d %s", res.StatusCode, res.Status)
 	}
 
 	audioData, err := io.ReadAll(res.Body)
@@ -38,7 +40,7 @@ func playPronunciationAudio() error {
 
 	homedir, err := os.UserHomeDir()
 	if err != nil {
-		return fmt.Errorf("can't get user home directory")
+		return fmt.Errorf("unable to get user home directory")
 	}
 
 	file, err := os.CreateTemp(homedir, "pronunciation-audio*.mp3")
