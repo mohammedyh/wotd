@@ -9,9 +9,11 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 )
 
 func playPronunciationAudio() error {
+	const audioURLPrefix = "https://media.merriam-webster.com/audio/prons/en/us/mp3"
 	doc, err := initDocumentReader(wotdURL)
 	if err != nil {
 		return fmt.Errorf("error parsing html document: %v", err)
@@ -21,9 +23,10 @@ func playPronunciationAudio() error {
 	if !exists {
 		return errors.New("unable to get audio filename")
 	}
-	audioURL := fmt.Sprintf("https://media.merriam-webster.com/audio/prons/en/us/mp3/%v/%v.mp3", string(filename[0]), filename)
+	audioURL := fmt.Sprintf("%v/%v/%v.mp3", audioURLPrefix, string(filename[0]), filename)
 
-	res, err := http.Get(audioURL) // TODO: implement custom http client with timeout
+	client := &http.Client{Timeout: 5 * time.Second}
+	res, err := client.Get(audioURL)
 	if err != nil {
 		return err
 	}
