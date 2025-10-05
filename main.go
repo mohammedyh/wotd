@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	wotdURL   = "https://www.dictionary.com/e/word-of-the-day"
+	wotdURL   = "https://www.merriam-webster.com/word-of-the-day/"
 	magenta   = "\033[30;45m"
 	underline = "\033[4m"
 	noColor   = "\033[0m"
@@ -59,18 +59,17 @@ func main() {
 	}
 
 	var (
-		word              = doc.Find(".otd-item-headword__word h1.js-fit-text")
-		definitionAndType = doc.Find(".otd-item-headword__pos-blocks .otd-item-headword__pos p")
-		wordExamples      = doc.Find(".wotd-item-origin__content ul:nth-of-type(2)").Eq(0)
-		wordType          = definitionAndType.Eq(0)
-		definition        = definitionAndType.Eq(1)
-		formattedExamples = strings.TrimSuffix(strings.ReplaceAll(wordExamples.Text(), "\n", " \n - "), "\n - ")
+		word              = doc.Find(".word-header-txt")
+		wordType          = doc.Find(".word-attributes .main-attr")
+		definition        = doc.Find(".wod-definition-container p").First()
+		examples          = doc.Find(".wod-definition-container p").Slice(1, -5).Text()
+		formattedExamples = strings.TrimSpace(strings.Join(strings.Split(examples, "//"), "\n-"))
 	)
 
 	fmt.Printf("%v: %v\n", colorOutput("Word"), word.First().Text())
 	fmt.Printf("%v: %v\n", underlineOutput("Word Type"), strings.Trim(wordType.Text(), " \n"))
 	fmt.Printf("%v: %v\n", underlineOutput("Definition"), definition.Text())
-	fmt.Printf("%v: %v\n", underlineOutput("Examples"), formattedExamples)
+	fmt.Printf("%v:\n%v\n", underlineOutput("Examples"), formattedExamples)
 }
 
 func openWotdPageInBrowser(url string) {
