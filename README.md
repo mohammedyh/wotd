@@ -1,10 +1,9 @@
 # wotd - word of the day
 
-A tiny CLI that returns the current word of the day (from dictionary.com), the word type (adjective, noun, adverb), the definition, and some examples of how the word is used in a sentence.
+A tiny CLI that returns the current [word of the day](https://www.merriam-webster.com/word-of-the-day)with the word type (adjective, noun, adverb), definition, and some example usages.
 
-- If a `-o` flag is provided, the word of the day page will open in the user's browser.
-- If a `-a` flag is provided, the word pronunciation audio will play
+- The `-o` flag opens the word of the day page in the browser
+- The `-a` flag plays the word pronunciation audio
 
 ![CLI demo GIF](./.github/demo.gif)
 
-[Word of the day](https://www.dictionary.com/e/word-of-the-day)
