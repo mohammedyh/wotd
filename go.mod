@@ -1,6 +1,6 @@
 module github.com/mohammedyh/wotd
 
-go 1.24.3
+go 1.26.0
 
 require github.com/PuerkitoBio/goquery v1.10.3
 
